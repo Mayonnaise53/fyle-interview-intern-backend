@@ -4,6 +4,10 @@ from marshmallow_enum import EnumField
 from core.models.assignments import Assignment, GradeEnum
 from core.libs.helpers import GeneralObject
 
+# from marshmallow import Schema, EXCLUDE, fields, post_load
+# from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
+from core.models.teachers import Teacher  # Adjust the import according to your project structure
+
 
 class AssignmentSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -49,3 +53,18 @@ class AssignmentGradeSchema(Schema):
     def initiate_class(self, data_dict, many, partial):
         # pylint: disable=unused-argument,no-self-use
         return GeneralObject(**data_dict)
+
+
+class TeacherSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Teacher
+        unknown = EXCLUDE
+
+    id = auto_field(required=False, allow_none=True)
+    user_id = auto_field(required=True)
+    created_at = auto_field(dump_only=True)  # This field is typically not set by the user
+    updated_at = auto_field(dump_only=True)  # This field is typically not set by the user
+
+    @post_load
+    def initiate_class(self, data_dict, many, partial):
+        return Teacher(**data_dict)
